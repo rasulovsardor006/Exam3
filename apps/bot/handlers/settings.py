@@ -21,7 +21,7 @@ async def settings(callback_query: CallbackQuery):
     if not user_data:
         await callback_query.message.edit_text(
             "Iltimos avval ro'yxatdan o'ting \nTilni tanlang:",
-            reply_markup=inline_languages()  # inline_languages() tugmalari bilan til tanlash
+            reply_markup=inline_languages()  
         )
         return
 
@@ -45,7 +45,7 @@ def inline_settings():
     return keyboard.as_markup()
 
 
-def inline_languages():  # "inline_languages" nomi to'g'ri bo'lishi kerak
+def inline_languages():  
     keyboard = InlineKeyboardBuilder()
     keyboard.button(text="🇺🇿 O'zbek", callback_data="set_language:uz")
     keyboard.button(text="🇷🇺 Русский", callback_data="set_language:ru")
@@ -58,7 +58,7 @@ def inline_languages():  # "inline_languages" nomi to'g'ri bo'lishi kerak
 async def change_language(callback_query: CallbackQuery):
     await callback_query.message.edit_text(
         "🌐 Tilni tanlang:",
-        reply_markup=inline_languages()  # inline_languages()ni chaqirish
+        reply_markup=inline_languages()  
     )
 
 
