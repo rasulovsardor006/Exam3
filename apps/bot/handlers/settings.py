@@ -21,7 +21,7 @@ async def settings(callback_query: CallbackQuery):
     if not user_data:
         await callback_query.message.edit_text(
             "Iltimos avval ro'yxatdan o'ting \nTilni tanlang:",
-            reply_markup=inline_languages()  
+            reply_markup=inline_languages()
         )
         return
 
@@ -45,7 +45,7 @@ def inline_settings():
     return keyboard.as_markup()
 
 
-def inline_languages():  
+def inline_languages():
     keyboard = InlineKeyboardBuilder()
     keyboard.button(text="🇺🇿 O'zbek", callback_data="set_language:uz")
     keyboard.button(text="🇷🇺 Русский", callback_data="set_language:ru")
@@ -58,9 +58,8 @@ def inline_languages():
 async def change_language(callback_query: CallbackQuery):
     await callback_query.message.edit_text(
         "🌐 Tilni tanlang:",
-        reply_markup=inline_languages()  
+        reply_markup=inline_languages()
     )
-
 
 
 @router.callback_query(lambda c: c.data.startswith("set_language"))
@@ -69,12 +68,16 @@ async def set_language(callback: CallbackQuery):
     user_id = callback.from_user.id
 
     user = await User.objects.filter(telegram_id=user_id).afirst()
+
     if not user:
-        user = User(telegram_id=user_id, language=language_code)
-        await user.asave()
-    else:
-        user.language = language_code
-        await user.asave()
+        await callback.message.edit_text(
+            "Iltimos avval ro'yxatdan o'ting. Ro'yxatdan o'tish uchun asosiy menyudan ro'yxatdan o'tish bo'limini tanlang.",
+            reply_markup=inline_main_menu()
+        )
+        return
+
+    user.language = language_code
+    await user.asave()
 
     cache_key = f"user_language_{user_id}"
     cache.set(cache_key, language_code, timeout=3600)
@@ -86,8 +89,3 @@ async def set_language(callback: CallbackQuery):
     if callback.message.text != text:
         await callback.message.edit_text(text=text,
                                          reply_markup=inline_settings())
-
-
-
-
-
